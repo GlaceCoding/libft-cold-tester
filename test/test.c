@@ -6,7 +6,7 @@
 /*   By: gphilipp <gphilipp@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 14:35:46 by gphilipp          #+#    #+#             */
-/*   Updated: 2021/10/24 20:52:40 by gphilipp         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:32:01 by gphilipp         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -379,35 +379,42 @@ MU_TEST(test_menchr) {
 	mu_assert_string_eq(memchr(a1str, a1chr, 11), ft_memchr(a1str, a1chr, 11));
 }
 
-MU_TEST(test_memcmp) {
-	mu_assert_int_eq(memcmp("\0", "\200", 10),
+/* GNU simple memcmp implementation, used as reference to test the optimized one
+ * https://github.com/lattera/glibc/blob/master/string/test-memcmp.c */
+int	simple_memcmp(const char *s1, const char *s2, size_t n) {
+	int ret = 0; while (n-- && (ret = *(unsigned char *) s1++ - *(unsigned char *) s2++) == 0);
+	return ret;
+}
+
+MU_TEST(test_memcmp) { // DONT COMPARE TO MEMCMP THE MOULINETTE DONT LIKE IT USE SIMPLE_MEMCMP INSTEAD
+	mu_assert_int_eq(simple_memcmp("\0", "\200", 10),
 				  ft_memcmp("\0", "\200", 10));
-	mu_assert_int_eq(memcmp("pisc<ine 40dwde", "piscine 42dewde", 10),
+	mu_assert_int_eq(simple_memcmp("pisc<ine 40dwde", "piscine 42dewde", 10),
 				  ft_memcmp("pisc<ine 40dwde", "piscine 42dewde", 10));
-	mu_assert_int_eq(memcmp("\xff\xaa\xde\x12", "\xff\xaa\xde\x12MACOSAAAAA", 4),
+	mu_assert_int_eq(simple_memcmp("\xff\xaa\xde\x12", "\xff\xaa\xde\x12MACOSAAAAA", 4),
 				  ft_memcmp("\xff\xaa\xde\x12", "\xff\xaa\xde\x12MACOSAAAAA", 4));
-	mu_assert_int_eq(memcmp("\xff\xaa\xde\xffMACOSX\xff", "\xff\xaa\xde\x02", 8),
+	mu_assert_int_eq(simple_memcmp("\xff\xaa\xde\xffMACOSX\xff", "\xff\xaa\xde\x02", 8),
 				  ft_memcmp("\xff\xaa\xde\xffMACOSX\xff", "\xff\xaa\xde\x02", 8));
-	mu_assert_int_eq(memcmp("atoms\0\0\0\0", "atoms\0abc", 8),
+	mu_assert_int_eq(simple_memcmp("atoms\0\0\0\0", "atoms\0abc", 8),
 				  ft_memcmp("atoms\0\0\0\0", "atoms\0abc", 8));
-	mu_assert_int_eq(memcmp("\xff\xaa\xde\200", "\xff\xaa\xde\0", 8),
+	mu_assert_int_eq(simple_memcmp("\xff\xaa\xde\200", "\xff\xaa\xde\0", 8),
 				  ft_memcmp("\xff\xaa\xde\200", "\xff\xaa\xde\0", 8));
-	mu_assert_int_eq(memcmp("piscine", "piscine 42dwdewdw", 10),
+	mu_assert_int_eq(simple_memcmp("piscine", "piscine 42dwdewdw", 10),
 				  ft_memcmp("piscine", "piscine 42dwdewdw", 10));
-	mu_assert_int_eq(memcmp("piscine", "piscine 42dwdewdw", 10),
+	mu_assert_int_eq(simple_memcmp("piscine", "piscine 42dwdewdw", 10),
 				  ft_memcmp("piscine", "piscine 42dwdewdw", 10));
-	mu_assert_int_eq(memcmp("piscine 42dewd", "piscineXXX", 7),
+	mu_assert_int_eq(simple_memcmp("piscine 42dewd", "piscineXXX", 7),
 				  ft_memcmp("piscine 42dewd", "piscineXXX", 7));
-	mu_assert_int_eq(memcmp("piscine 42dedw", "piscine 425824", 10),
+	mu_assert_int_eq(simple_memcmp("piscine 42dedw", "piscine 425824", 10),
 				  ft_memcmp("piscine 42dedw", "piscine 425824", 10));
-	mu_assert_int_eq(memcmp("piscine 42dwdw", "piscine", 10),
+	mu_assert_int_eq(simple_memcmp("piscine 42dwdw", "piscine", 10),
 				  ft_memcmp("piscine 42dwdw", "piscine", 10));
-	mu_assert_int_eq(memcmp("piscine 42dwwed", "piscine 40dwedewd", 10),
+	mu_assert_int_eq(simple_memcmp("piscine 42dwwed", "piscine 40dwedewd", 10),
 				  ft_memcmp("piscine 42dwwed", "piscine 40dwedewd", 10));
-	mu_assert_int_eq(memcmp("\0piscine 42dwwed", "\0piscine 40dwedewd", 10),
+	mu_assert_int_eq(simple_memcmp("\0piscine 42dwwed", "\0piscine 40dwedewd", 10),
 				  ft_memcmp("\0piscine 42dwwed", "\0piscine 40dwedewd", 10));
 	for (int i = 0; i < 20; ++i)
-		mu_assert_int_eq(memcmp("piscine\0de 42.  \0   ", "piscine\0de 42/     ", i),
+		mu_assert_int_eq(simple_memcmp("piscine\0de 42.  \0   ", "piscine\0de 42/     ", i),
 					  ft_memcmp("piscine\0de 42.  \0   ", "piscine\0de 42/     ", i));
 }
 
@@ -536,13 +543,13 @@ MU_TEST(test_atoi) {
 }
 
 MU_TEST(test_calloc) {
-	for (int i = 0, *o, *c; i < malloc_good_size(2) + 8; ++i)
+	for (int i = 0, *o, *c; i < malloc_good_size(4) + 8; ++i)
 	{
 		o = calloc(i, sizeof(*o));
 		c = ft_calloc(i, sizeof(*c));
 		mu_assert_int_eq(malloc_size(o), malloc_size(c));
-		if (i > 0)
-			mu_assert_int_eq(o[i - 1], c[i - 1]);
+		for (int j = 1; j < i; ++j)
+			mu_assert_int_eq(o[j - 1], c[j - 1]);
 		free(o);
 		free(c);
 	}

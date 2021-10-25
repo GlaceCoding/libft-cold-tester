@@ -28,3 +28,4 @@ ft_putnbr_fd.c:write
 ft_strtrim.c:ft_strrchr
 ft_strtrim.c:ft_substr
 ft_strmapi.c:ft_strdup
+ft_calloc.c:ft_bzero
