@@ -18,6 +18,14 @@ Pour utiliser le testeur, mettez le contenu de ce repo dans votre projet ou modi
 sh test/test.c
 ```
 
+![](https://user-images.githubusercontent.com/92152391/139014712-64cd33d6-ea1f-4e03-a969-5320dad413f2.png)
+
+Exemple lors d'[une erreur](https://github.com/GlaceCoding/exemple_rendu/runs/3859178872?check_suite_focus=true#step:4:4) :
+
+![image](https://user-images.githubusercontent.com/92152391/139015144-eaaf4050-7086-4ac0-ac43-e0510fd5d587.png)
+
+Ce tester peut fonctionner en github action à chaqu'un de vos push sur la branch main de votre repos github, en suivant la structure de ce repos : https://github.com/GlaceCoding/exemple_rendu/runs/3859178872?check_suite_focus=true#step:4:4
+
 ## Autres testeurs :
 
  - https://github.com/jtoty/Libftest
