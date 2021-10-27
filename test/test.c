@@ -6,7 +6,7 @@
 /*   By: gphilipp <gphilipp@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/18 14:35:46 by gphilipp          #+#    #+#             */
-/*   Updated: 2021/10/25 16:32:01 by gphilipp         ###   ########.fr       */
+/*   Updated: 2021/10/26 16:57:41 by gphilipp         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,6 +237,8 @@ MU_TEST(test_strlcat) {
 	char	dest2[42] = "piscine";
 	mu_assert_int_eq(strlcat(dest1, " 42->le code n'est pas bon", 11),
 				  ft_strlcat(dest2, " 42->le code n'est pas bon", 11));
+	mu_assert_string_eq(dest1, dest2);
+	mu_assert_int_eq(strlcat(dest1, " 42", 0), ft_strlcat(dest2, " 42", 0));
 	mu_assert_string_eq(dest1, dest2);
 	char	dest1a[42] = "piscine";
 	char	dest2a[42] = "piscine";
@@ -603,13 +605,19 @@ MU_TEST(test_substr) {
 	char str[] = "C'est la piscine de 42 OK !?";
 	char *out;
 	mu_assert_string_eq(NULL, ft_substr(NULL, 0, 2));
-	mu_assert_string_eq("2", ft_substr("piscine 42", 9, 13));
-	mu_assert_string_eq("\0", ft_substr("piscine 42", 10, 13));
-	mu_assert_string_eq("\0", ft_substr("piscine 42", 11, 13));
+	mu_assert_string_eq("2", out = ft_substr("piscine 42", 9, 13)); free(out);
+	mu_assert_string_eq("\0", out = ft_substr("piscine 42", 10, 13)); free(out);
+	mu_assert_string_eq("\0", out = ft_substr("piscine 42", 11, 13)); free(out);
 	mu_assert_string_eq("piscine de 42", out = ft_substr(str, 9, 13)); free(out);
 	mu_assert_string_eq("\0", out = ft_substr(str, 8, 0)); free(out);
 	mu_assert_string_eq("C'est la piscine de 42 OK !?", out = ft_substr(str, 0, 100));
 	mu_assert_int_eq(malloc_good_size(29 * sizeof(char)), malloc_size(out));
+	free(out);
+	mu_assert_string_eq("", out = ft_substr("piscine 42", 100, 1));
+	mu_assert_int_eq(malloc_good_size(1), malloc_size(out));
+	free(out);
+	mu_assert_string_eq("", out = ft_substr("1", 42, 42000000));
+	mu_assert_int_eq(malloc_good_size(1), malloc_size(out));
 	free(out);
 	char *stra = calloc(malloc_good_size(2) + 9, sizeof(*stra));
 	memset(stra, 'a', malloc_good_size(2) + 8);
@@ -649,6 +657,7 @@ MU_TEST(test_strjoin) {
 
 MU_TEST(test_strtrim) {
 	char *out;
+	mu_assert_string_eq("\0", out = ft_strtrim("4442224222", "42")); free(out);
 	mu_assert_string_eq("piscine de 42", out = ft_strtrim("piscine de 42", "")); free(out);
 	mu_assert_string_eq("piscine de 42", out = ft_strtrim("      piscine de 42     ", " ")); free(out);
 	mu_assert_string_eq("piscine de 42", out = ft_strtrim("aaaaaapiscine de 42bbbbb", "ab")); free(out);
