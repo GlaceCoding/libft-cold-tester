@@ -12,7 +12,11 @@ Certain test sont un peu plus sévère que la moulinette car je test que l'alloc
 
 ## Usage
 
-Pour utiliser le testeur, mettez le contenu de ce repo dans votre projet ou modifier l'include à libft.h dans test.c.
+Pour utiliser le testeur, mettez le contenu de ce repo dans votre projet ou modifier l'include à libft.h dans test.c puis faites :
+
+```
+sh test/test.c
+```
 
 ## Autres testeurs :
 
